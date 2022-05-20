@@ -1593,13 +1593,17 @@ class QuaternionIntegrator(object):
         output = '/home/fbalboa/simulations/RigidMultiblobsWall/articulated/data/run0/run102/run102.0.0.0.lambda_blobs.dat'
         np.savetxt(output, lambda_blobs)
 
-        # Save velocity fields
+        # Save velocity fields xxx
         r_vectors_blobs = self.get_blobs_r_vectors(self.bodies, self.Nblobs)
-        # grid = np.array([-12, 12, 100, -12, 12, 100, -8, 16, 240])
-        grid = self.plot_velocity_field
-        # output = '/home/fbalboa/simulations/RigidMultiblobsWall/articulated/data/run0/run102/run102.0.0.0.velocity_field.vtk'
-        pvf.plot_velocity_field(grid, r_vectors_blobs, lambda_blobs, self.a, self.eta, self.output_name, 0, mobility_vector_prod_implementation='numba_no_wall')
-        # output = '/home/fbalboa/simulations/RigidMultiblobsWall/articulated/data/run0/run102/run102.0.0.0.velocity_field_sphere.dat'
+        pvf.plot_velocity_field(self.plot_velocity_field,
+                                r_vectors_blobs,
+                                lambda_blobs,
+                                self.a,
+                                self.eta,
+                                self.output_name + '.step.' + str(step).zfill(8),
+                                0,
+                                radius_source=self.radius_blobs,
+                                mobility_vector_prod_implementation='numba_no_wall')
         pvfa.plot_velocity_field(self.bodies, lambda_blobs, self.eta, 20, 12, self.output_name, frame_body=False, mobility_vector_prod_implementation='numba_no_wall')
 
       # Compute center of mass velocity and update

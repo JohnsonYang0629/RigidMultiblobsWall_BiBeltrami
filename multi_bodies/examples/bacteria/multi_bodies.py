@@ -1250,6 +1250,11 @@ if __name__ == '__main__':
   integrator.nonlinear_solver_tolerance = read.nonlinear_solver_tolerance
   integrator.output_name = output_name
   integrator.plot_velocity_field = read.plot_velocity_field
+  radius_blobs = []
+  for k, b in enumerate(bodies):
+    radius_blobs.append(b.blobs_radius)
+  radius_blobs = np.concatenate(radius_blobs, axis=0)
+  integrator.radius_blobs = radius_blobs
 
   # Initialize HydroGrid library:
   if found_HydroGrid and read.call_HydroGrid:
