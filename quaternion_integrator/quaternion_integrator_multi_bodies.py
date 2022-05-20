@@ -1583,28 +1583,37 @@ class QuaternionIntegrator(object):
       # Extract velocities
       velocities = sol_precond[3*self.Nblobs: 3*self.Nblobs + 6*len(self.bodies)]
 
-      if True:
+      if np.any(self.plot_velocity_field) or np.any(self.plot_velocity_field_sphere):
         # Save bodies velocities
-        output = '/home/fbalboa/simulations/RigidMultiblobsWall/articulated/data/run0/run102/run102.0.0.0.velocities.dat'
+        output = self.output_name + '.step.' + str(step).zfill(8) + '.velocities.dat'
         np.savetxt(output, velocities)
         
         # Extract blob forces 
         lambda_blobs = sol_precond[0 : 3*self.Nblobs]
-        output = '/home/fbalboa/simulations/RigidMultiblobsWall/articulated/data/run0/run102/run102.0.0.0.lambda_blobs.dat'
+        output = self.output_name + '.step.' + str(step).zfill(8) + '.lambda_blobs.dat'
         np.savetxt(output, lambda_blobs)
 
-        # Save velocity fields xxx
-        r_vectors_blobs = self.get_blobs_r_vectors(self.bodies, self.Nblobs)
-        pvf.plot_velocity_field(self.plot_velocity_field,
-                                r_vectors_blobs,
-                                lambda_blobs,
-                                self.a,
-                                self.eta,
-                                self.output_name + '.step.' + str(step).zfill(8),
-                                0,
-                                radius_source=self.radius_blobs,
-                                mobility_vector_prod_implementation='numba_no_wall')
-        pvfa.plot_velocity_field(self.bodies, lambda_blobs, self.eta, 20, 12, self.output_name, frame_body=False, mobility_vector_prod_implementation='numba_no_wall')
+        # Save velocity fields
+        if np.any(self.plot_velocity_field_sphere):
+          r_vectors_blobs = self.get_blobs_r_vectors(self.bodies, self.Nblobs)
+          pvf.plot_velocity_field(self.plot_velocity_field,
+                                  r_vectors_blobs,
+                                  lambda_blobs,
+                                  self.a,
+                                  self.eta,
+                                  self.output_name + '.step.' + str(step).zfill(8),
+                                  0,
+                                  radius_source=self.radius_blobs,
+                                  mobility_vector_prod_implementation='numba_no_wall')
+        if np.any(self.plot_velocity_field):
+          pvfa.plot_velocity_field(self.bodies,
+                                   lambda_blobs,
+                                   self.eta,
+                                   self.plot_velocity_field_sphere[0],
+                                   self.plot_velocity_field_sphere[1],
+                                   self.output_name + '.step.' + str(step).zfill(8) + '.velocity_field_sphere.dat',
+                                   frame_body=self.plot_velocity_field_sphere[2],
+                                   mobility_vector_prod_implementation='numba_no_wall')
 
       # Compute center of mass velocity and update
       for art in self.articulated:

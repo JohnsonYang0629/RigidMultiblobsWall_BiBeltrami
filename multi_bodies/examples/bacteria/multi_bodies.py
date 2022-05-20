@@ -1250,6 +1250,7 @@ if __name__ == '__main__':
   integrator.nonlinear_solver_tolerance = read.nonlinear_solver_tolerance
   integrator.output_name = output_name
   integrator.plot_velocity_field = read.plot_velocity_field
+  integrator.plot_velocity_field_sphere = read.plot_velocity_field_sphere
   radius_blobs = []
   for k, b in enumerate(bodies):
     radius_blobs.append(b.blobs_radius)
