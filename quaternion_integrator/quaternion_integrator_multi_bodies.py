@@ -9,6 +9,7 @@ import copy
 from stochastic_forcing import stochastic_forcing as stochastic
 from mobility import mobility as mob
 from plot import plot_velocity_field as pvf
+from plot import plot_velocity_field_articulated as pvfa
 import general_application_utils as utils
 
 try:
@@ -1445,10 +1446,10 @@ class QuaternionIntegrator(object):
 
       # Solve preconditioned linear system
       counter = gmres_counter(print_residual = self.print_residual)
-      (sol_precond, info_precond) = utils.gmres(A, RHS, x0=x0, tol=self.tolerance, M=PC, maxiter=1000, restart=60, callback=counter)
-      self.det_iterations_count += counter.niter
-      # (sol_precond, infos, resnorms) = gmres.gmres(A, RHS, x0=x0, tol=self.tolerance, M=PC, maxiter=1000, restart=60, verbose=self.print_residual, convergence='presid')
-      # self.det_iterations_count += len(resnorms)
+      # (sol_precond, info_precond) = utils.gmres(A, RHS, x0=x0, tol=self.tolerance, M=PC, maxiter=1000, restart=60, callback=counter)
+      # self.det_iterations_count += counter.niter
+      (sol_precond, infos, resnorms) = gmres.gmres(A, RHS, x0=x0, tol=self.tolerance, M=PC, maxiter=360, restart=180, verbose=self.print_residual, convergence='presid')
+      self.det_iterations_count += len(resnorms)
     else:
       sol_precond = np.zeros_like(RHS)
 
@@ -1581,6 +1582,25 @@ class QuaternionIntegrator(object):
 
       # Extract velocities
       velocities = sol_precond[3*self.Nblobs: 3*self.Nblobs + 6*len(self.bodies)]
+
+      if True:
+        # Save bodies velocities
+        output = '/home/fbalboa/simulations/RigidMultiblobsWall/articulated/data/run0/run102/run102.0.0.0.velocities.dat'
+        np.savetxt(output, velocities)
+        
+        # Extract blob forces 
+        lambda_blobs = sol_precond[0 : 3*self.Nblobs]
+        output = '/home/fbalboa/simulations/RigidMultiblobsWall/articulated/data/run0/run102/run102.0.0.0.lambda_blobs.dat'
+        np.savetxt(output, lambda_blobs)
+
+        # Save velocity fields
+        r_vectors_blobs = self.get_blobs_r_vectors(self.bodies, self.Nblobs)
+        # grid = np.array([-12, 12, 100, -12, 12, 100, -8, 16, 240])
+        grid = self.plot_velocity_field
+        # output = '/home/fbalboa/simulations/RigidMultiblobsWall/articulated/data/run0/run102/run102.0.0.0.velocity_field.vtk'
+        pvf.plot_velocity_field(grid, r_vectors_blobs, lambda_blobs, self.a, self.eta, self.output_name, 0, mobility_vector_prod_implementation='numba_no_wall')
+        # output = '/home/fbalboa/simulations/RigidMultiblobsWall/articulated/data/run0/run102/run102.0.0.0.velocity_field_sphere.dat'
+        pvfa.plot_velocity_field(self.bodies, lambda_blobs, self.eta, 20, 12, self.output_name, frame_body=False, mobility_vector_prod_implementation='numba_no_wall')
 
       # Compute center of mass velocity and update
       for art in self.articulated:
