@@ -1594,7 +1594,7 @@ class QuaternionIntegrator(object):
         np.savetxt(output, lambda_blobs)
 
         # Save velocity fields
-        if np.any(self.plot_velocity_field_sphere):
+        if np.any(self.plot_velocity_field):
           r_vectors_blobs = self.get_blobs_r_vectors(self.bodies, self.Nblobs)
           pvf.plot_velocity_field(self.plot_velocity_field,
                                   r_vectors_blobs,
@@ -1605,7 +1605,7 @@ class QuaternionIntegrator(object):
                                   0,
                                   radius_source=self.radius_blobs,
                                   mobility_vector_prod_implementation='numba_no_wall')
-        if np.any(self.plot_velocity_field):
+        if np.any(self.plot_velocity_field_sphere):
           pvfa.plot_velocity_field(self.bodies,
                                    lambda_blobs,
                                    self.eta,
