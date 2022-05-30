@@ -1595,10 +1595,10 @@ class QuaternionIntegrator(object):
 
         # Save velocity fields
         if np.any(self.plot_velocity_field):
-          r_vectors_blobs = self.get_blobs_r_vectors(self.bodies, self.Nblobs)
+          r_vectors_blobs, lambda_blobs_frame = get_r_vectors_frame_body(lambda_blobs, frame_body=-1)
           pvf.plot_velocity_field(self.plot_velocity_field,
                                   r_vectors_blobs,
-                                  lambda_blobs,
+                                  lambda_blobs_frame,
                                   self.a,
                                   self.eta,
                                   self.output_name + '.step.' + str(step).zfill(8),
@@ -1779,6 +1779,35 @@ class QuaternionIntegrator(object):
     # Return true or false
     return valid_configuration
 
+  def get_r_vectors_frame_body(lambda_blobs, frame_body=-1):
+    '''
+    Get blobs r_vectors and forces in the frame of reference of one body. 
+    '''
+    # Get r_vectors, rotation to body 0 frame of reference if frame_body=True
+    r_vectors = np.empty((lambda_blobs.size // 3, 3))
+    offset = 0
+    if frame_body >= 0:
+      R0 = self.bodies[frame_body].orientation.rotation_matrix().T
+      theta0 = self.bodies[frame_body].orientation.inverse()
+      for b in self.bodies:
+        location = np.dot(R0, (b.location - self.bodies[frame_body].location))
+        orientation = theta0 * b.orientation
+        num_blobs = b.Nblobs
+        r_vectors[offset:(offset+num_blobs)] = b.get_r_vectors(location=location, orientation=orientation)
+        offset += num_blobs
+      lambda_blobs = lambda_blobs.reshape((lambda_blobs.size // 3, 3))
+      for i in range(lambda_blobs.shape[0]):
+        lambda_blobs[i] = np.dot(R0, lambda_blobs[i])
+    else:    
+      for b in self.bodies:
+        location = b.location
+        orientation = b.orientation
+        num_blobs = b.Nblobs
+        r_vectors[offset:(offset+num_blobs)] = b.get_r_vectors(location=location, orientation=orientation)
+        offset += num_blobs
+      lambda_blobs_frame = np.copy(lambda_blobs)
+    return r_vectors_frame, lambda_blobs_frame
+  
 
 class gmres_counter(object):
   '''
