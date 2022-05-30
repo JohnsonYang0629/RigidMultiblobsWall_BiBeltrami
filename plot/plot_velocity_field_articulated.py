@@ -81,7 +81,10 @@ def plot_velocity_field(bodies, lambda_blobs, eta, sphere_radius, p, output, fra
       orientation = theta0 * b.orientation
       num_blobs = b.Nblobs
       r_vectors[offset:(offset+num_blobs)] = b.get_r_vectors(location=location, orientation=orientation)
-      offset += num_blobs     
+      offset += num_blobs
+    lambda_blobs = lambda_blobs.reshape((lambda_blobs.size // 3, 3))
+    for i in range(lambda_blobs.shape[0]):
+      lambda_blobs[i] = np.dot(R0, lambda_blobs[i])
   else:    
     for b in bodies:
       location = b.location
