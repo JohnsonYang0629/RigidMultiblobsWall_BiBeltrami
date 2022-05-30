@@ -94,7 +94,9 @@ class ReadInput(object):
     self.repulsion_strength_firm = float(self.options.get('repulsion_strength_firm') or 0.0)
     self.firm_delta = float(self.options.get('firm_delta') or 1e-02)
     self.Lub_Cut = float(self.options.get('Lub_Cut') or 4.5)
-
+    self.zmin = float(self.options.get('zmin') or 0)
+    self.zmax = float(self.options.get('zmax') or 1e7)
+    self.domType = str(self.options.get('domType') or 'RPB')
 
     # Create list with [vertex_file, clones_file] for each structure
     self.num_free_bodies = number_of_structures
