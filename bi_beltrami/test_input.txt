@@ -1,0 +1,17 @@
+# model parameters
+nu              2
+gamma           3
+
+# mesh-free parameters
+k0              51
+degree          2
+
+pde_solver      extrinsic
+
+slip_save_type  velocity_field
+save_directory  slip_files/
+save_potential  True
+error_display   True
+
+# Load rigid bodies configuration, provide *.vertex files
+structure   vertex_files/shell_N_601_Rg_1_FM_cube2sphere.vertex

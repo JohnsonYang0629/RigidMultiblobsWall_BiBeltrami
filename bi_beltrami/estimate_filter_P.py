@@ -1,6 +1,7 @@
 import random
 import numpy as np
-import math
+# import math
+
 
 def sphere_P0Cheat_v2(theta, x, am):
     """
@@ -26,13 +27,13 @@ def sphere_P0Cheat_v2(theta, x, am):
     # tangent direction
     tvec = np.zeros((d, n, N))
     # tangent 1
-    tvec[0, 0, :] = am * np.array([math.cos(tt) for tt in THETA]) * np.array([math.cos(pp) for pp in PHI])
-    tvec[0, 1, :] = am * np.array([math.cos(tt) for tt in THETA]) * np.array([math.sin(pp) for pp in PHI])
-    tvec[0, 2, :] = - am * np.array([math.sin(tt) for tt in THETA])
+    tvec[0, 0, :] = am * np.array([np.cos(tt) for tt in THETA]) * np.array([np.cos(pp) for pp in PHI])
+    tvec[0, 1, :] = am * np.array([np.cos(tt) for tt in THETA]) * np.array([np.sin(pp) for pp in PHI])
+    tvec[0, 2, :] = - am * np.array([np.sin(tt) for tt in THETA])
     # tangent 2
-    tvec[1, 0, :] = - am * np.array([math.sin(tt) for tt in THETA]) * np.array([math.sin(pp) for pp in PHI])
-    tvec[1, 1, :] = am * np.array([math.sin(tt) for tt in THETA]) * np.array([math.cos(pp) for pp in PHI])
-    tvec[1, 2, :] = np.array([math.cos(tt) for tt in THETA]) * 0
+    tvec[1, 0, :] = - am * np.array([np.sin(tt) for tt in THETA]) * np.array([np.sin(pp) for pp in PHI])
+    tvec[1, 1, :] = am * np.array([np.sin(tt) for tt in THETA]) * np.array([np.cos(pp) for pp in PHI])
+    tvec[1, 2, :] = np.array([np.cos(tt) for tt in THETA]) * 0
 
     # normalized tangent direction
     tvec2 = np.zeros((d, n, N))
